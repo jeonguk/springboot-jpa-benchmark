@@ -14,9 +14,15 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/bench")
-    public ResponseEntity<Void> persistTest() {
+    @PostMapping("/test1")
+    public ResponseEntity persistTestOne() {
         userService.jpaPersistBench();
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/test2")
+    public ResponseEntity persistTestTwo() {
+        userService.jpaCompositeKeyPersistBench();
         return ResponseEntity.ok().build();
     }
 

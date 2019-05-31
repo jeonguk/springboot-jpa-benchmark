@@ -1,5 +1,6 @@
 package com.jeonguk.web.service;
 
+import com.jeonguk.web.entity.Post;
 import com.jeonguk.web.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class UserService {
 
         int cont = 0;
         for (int i = 0; i < 15000; i++) {
-            final User user = new User();
+            final Post user = new Post();
             user.setName("name" + i);
             user.setCreatedAt(LocalDateTime.now());
             entityManager.persist(user);
@@ -46,8 +47,40 @@ public class UserService {
 
         final long endTime = System.currentTimeMillis();
         //final long secDiffTime = endTime - startTime;
-        log.info("estimatedTime {}", (endTime - startTime)/1000.0);
+        log.info("Test1 estimatedTime {}", (endTime - startTime)/1000.0);
 
     }
+
+    public void jpaCompositeKeyPersistBench() {
+
+        final long startTime = System.currentTimeMillis();
+        EntityManager entityManager = factory.createEntityManager();
+        final EntityTransaction tx = entityManager.getTransaction();
+
+        tx.begin();
+
+        int cont = 0;
+        for (int i = 0; i < 15000; i++) {
+            final User user = new User((long)i, (long)i, "name", LocalDateTime.now());
+            entityManager.persist(user);
+            cont++;
+            if (cont % BATCH_SIZE == 0) {
+                entityManager.flush();
+                entityManager.clear();
+                tx.commit();
+                tx.begin();
+            }
+        }
+
+        tx.commit();
+        entityManager.close();
+
+        final long endTime = System.currentTimeMillis();
+        //final long secDiffTime = endTime - startTime;
+        log.info("Test2 estimatedTime {}", (endTime - startTime)/1000.0);
+
+    }
+
+
 
 }
