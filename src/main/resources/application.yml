@@ -12,3 +12,13 @@ spring:
       hibernate:
         format_sql: true
     show-sql: false
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: WARN
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
